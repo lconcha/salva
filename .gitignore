@@ -91,3 +91,13 @@ app/assets/stylesheets/academic_base.css
 _mac
 *.xml
 ._.DS_Store
+CLAUDE.local.md
+apptainer/*.sif
+apptainer/bundle/
+apptainer/pgdata/
+apptainer/pgsock/
+apptainer/build.log
+apptainer/gem-list*.txt
+apptainer/gem-install.log
+apptainer/bundle-install.log
+apptainer/migrate.log

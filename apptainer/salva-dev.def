@@ -1,0 +1,76 @@
+Bootstrap: docker
+From: debian:bookworm
+
+%labels
+    Purpose SALVA dev/test container: Ruby 2.1.2 + Rails 3.2 + PostgreSQL
+    Ruby 2.1.2
+    Rails 3.2.21
+
+%help
+    Dev/test environment for the SALVA DOI/PMID importer fork.
+    Provides Ruby 2.1.2 (matching production), PostgreSQL, and the system
+    libraries needed to compile the app's native-extension gems (pg, rmagick,
+    bcrypt, nokogiri-adjacent xml libs, etc).
+
+    Base OS is Debian 12 (not an era-matching old Debian) because this host's
+    apptainer fakeroot build requires glibc >= 2.34; Ruby 2.1.2 is instead
+    built from source against a locally-built OpenSSL 1.0.2, since Ruby 2.1's
+    net/https predates the OpenSSL 1.1/3.x API.
+
+    Nothing app-specific (Gemfile, gems) is baked in — bundle install runs at
+    dev time against a bind-mounted bundle path so it survives image rebuilds.
+
+%post
+    set -e
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        build-essential git curl wget ca-certificates pkg-config \
+        autoconf bison \
+        zlib1g-dev libyaml-dev libreadline-dev libncurses5-dev libffi-dev libgdbm-dev \
+        libpq-dev postgresql postgresql-contrib \
+        libxml2-dev libxslt1-dev \
+        imagemagick libmagickwand-dev \
+        nodejs \
+        locales
+    rm -rf /var/lib/apt/lists/*
+
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+    locale-gen
+
+    # --- OpenSSL 1.0.2 (Ruby 2.1.2's ext/openssl needs the pre-1.1 API) ---
+    cd /usr/src
+    curl -fsSL https://www.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz -o openssl.tar.gz
+    tar xzf openssl.tar.gz
+    cd openssl-1.0.2u
+    ./config --prefix=/opt/openssl-1.0.2u --openssldir=/opt/openssl-1.0.2u/ssl shared
+    make -j"$(nproc)"
+    make install_sw
+    cd /usr/src && rm -rf openssl-1.0.2u openssl.tar.gz
+
+    # --- Ruby 2.1.2, built against that OpenSSL ---
+    cd /usr/src
+    curl -fsSL https://cache.ruby-lang.org/pub/ruby/2.1/ruby-2.1.2.tar.gz -o ruby.tar.gz
+    tar xzf ruby.tar.gz
+    cd ruby-2.1.2
+    ./configure --prefix=/opt/ruby-2.1.2 --disable-install-doc \
+        --with-openssl-dir=/opt/openssl-1.0.2u
+    make -j"$(nproc)"
+    make install
+    cd /usr/src && rm -rf ruby-2.1.2 ruby.tar.gz
+
+    SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
+        /opt/ruby-2.1.2/bin/gem install bundler -v 1.17.3 --no-document
+
+    mkdir -p /opt/pgdata
+
+%environment
+    export PATH=/opt/ruby-2.1.2/bin:$PATH
+    export LD_LIBRARY_PATH=/opt/openssl-1.0.2u/lib:$LD_LIBRARY_PATH
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    export PGBIN=/usr/lib/postgresql/15/bin
+    export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+
+%runscript
+    exec /opt/ruby-2.1.2/bin/ruby "$@"

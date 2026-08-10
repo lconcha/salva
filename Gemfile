@@ -2,6 +2,7 @@
 source 'https://rubygems.org'
 
 gem "rails", "~> 3.2.21"
+gem "rake", "10.4.2" # newer rake requires ruby >= 2.3; pin to match the app's Ruby 2.1.2
 gem "haml", "~> 4.0.3"
 gem "show_for", "0.2.5"
 gem "simple_form", "2.0.2"
@@ -23,7 +24,7 @@ gem "iconv", "1.0.4"
 
 # Searching and tagging
 gem "tsearch", :require => "texticle"
-gem "scope_by_fuzzy", :git => "git://github.com/monsterlabs/scope_by_fuzzy.git"
+gem "scope_by_fuzzy", :git => "git://github.com/monsterlabs/scope_by_fuzzy.git", :ref => "a185104a67de5d6ee75019d4d1041c212fdb27cd"
 
 # Control version
 gem "simple-navigation", "3.8.0"
@@ -42,7 +43,7 @@ gem "meta_search", "~> 1.1.3"
 gem "squeel", "~> 1.0.9"
 
 #Graphs
-gem "lazy_high_charts", "~> 1.5.5", :git => 'https://github.com/michelson/lazy_high_charts'
+gem "lazy_high_charts", "~> 1.5.5", :git => 'https://github.com/michelson/lazy_high_charts', :ref => "f7d4d1614816c98d81d9d7d387d4b6e0a9901d05"
 
 # Rails 3.1 - Asset Pipeline
 gem "sass", "~> 3.2.1"

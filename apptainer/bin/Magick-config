@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Shim for rmagick 2.13.2's extconf.rb, which shells out to the old
+# ImageMagick `Magick-config` tool. Debian 12 no longer ships it (ImageMagick
+# moved to pkg-config-only), so this delegates to `pkg-config MagickWand`.
+set -euo pipefail
+
+case "${1:-}" in
+    --version)
+        pkg-config --modversion MagickWand
+        ;;
+    --cflags|--cppflags)
+        pkg-config --cflags MagickWand
+        ;;
+    --ldflags)
+        pkg-config --libs-only-L MagickWand
+        ;;
+    --libs)
+        pkg-config --libs MagickWand
+        ;;
+    *)
+        echo "Magick-config shim: unsupported argument '${1:-}'" >&2
+        exit 1
+        ;;
+esac
