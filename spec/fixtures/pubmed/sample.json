@@ -1,0 +1,10 @@
+{ "uid": "22349457",
+  "pubdate": "2012 Aug",
+  "title": "Diffusion tensor imaging of the human brain.",
+  "fulljournalname": "NeuroImage",
+  "volume": "62", "issue": "3", "pages": "1204-1215",
+  "issn": "1053-8119",
+  "authors": [ {"name":"Concha L"}, {"name":"Doe J"} ],
+  "articleids": [ {"idtype":"pubmed","value":"22349457"},
+                  {"idtype":"doi","value":"10.1016/j.neuroimage.2012.03.072"} ]
+}

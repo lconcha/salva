@@ -101,3 +101,7 @@ apptainer/gem-list*.txt
 apptainer/gem-install.log
 apptainer/bundle-install.log
 apptainer/migrate.log
+*.tar.gz
+INTEGRATION*.pdf
+CLAUDE.md
+INTEGRATION.es.*

@@ -1,0 +1,12 @@
+%fieldset#doi_pmid_import
+  %legend Importar por DOI o PMID
+  = form_tag url, :method => :get do
+    .row
+      .span-6
+        = label_tag :doi, 'DOI'
+        = text_field_tag :doi, nil, :placeholder => '10.1038/s41586-020-1234-5'
+      .span-6
+        = label_tag :pmid, 'o PMID'
+        = text_field_tag :pmid, nil, :placeholder => '12345678'
+      .span-4.last
+        = submit_tag 'Importar', :class => 'prefill-import-button'

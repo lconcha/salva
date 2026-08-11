@@ -1,0 +1,10 @@
+{ "message": {
+    "DOI": "10.1000/xyz123",
+    "title": ["A study with no month in its issue date"],
+    "author": [ {"given":"Ana","family":"Perez"}, {"given":"Luis","family":"Gomez"} ],
+    "container-title": ["Journal of Examples"],
+    "ISSN": ["1234-5678"],
+    "volume": "10", "issue": "2", "page": "100-110",
+    "issued": {"date-parts": [[2019]]},
+    "URL": "https://doi.org/10.1000/xyz123"
+} }

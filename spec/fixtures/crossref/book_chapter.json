@@ -1,0 +1,11 @@
+{ "message": {
+    "DOI": "10.1000/chapter789",
+    "type": "book-chapter",
+    "title": ["A chapter with no ISSN, only ISBN"],
+    "author": [ {"given":"Carlos","family":"Ruiz"} ],
+    "container-title": ["Handbook of Examples"],
+    "ISBN": ["978-3-16-148410-0"],
+    "page": "45-67",
+    "issued": {"date-parts": [[2018, 11]]},
+    "URL": "https://doi.org/10.1000/chapter789"
+} }

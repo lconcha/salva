@@ -1,0 +1,10 @@
+{ "message": {
+    "DOI": "10.1000/solo456",
+    "title": ["A study with a single author"],
+    "author": [ {"given":"Maria","family":"Lopez"} ],
+    "container-title": ["Journal of Examples"],
+    "ISSN": ["1234-5678"],
+    "volume": "11", "issue": "1", "page": "1-9",
+    "issued": {"date-parts": [[2021, 3]]},
+    "URL": "https://doi.org/10.1000/solo456"
+} }

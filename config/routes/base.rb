@@ -11,6 +11,18 @@ Salva::Application.routes.draw do
                      :jobpositions, :user_research_lines, :academic_exchanges, :external_jobpositions,
                      :user_lab_or_groups, :user_knowledge_areas, :videos
 
+  # DOI/PMID importer: GET /<resource>/prefill?doi=... or ?pmid=... (new article)
+  # and GET /<resource>/:id/prefill?doi=...&pmid=... (re-fetch metadata onto an
+  # existing article being edited). Both map to the resource's #prefill action.
+  # Must be declared before the :articles/:unpublished_articles resources below,
+  # otherwise their GET /<resource>/:id (#show) route matches "prefill" as an :id first.
+  [:articles, :unpublished_articles].each do |resource_name|
+    resources resource_name, :only => [] do
+      get :prefill, :on => :collection
+      get :prefill, :on => :member
+    end
+  end
+
   publication_resources_for :articles, :unpublished_articles, :popular_science_works, :outreach_works,
                             :other_works,:teaching_products, :technical_reports, :seminaries, :newspaper_articles,
                             :technical_products, :course_attendees, :course_instructors, :conference_attendees,

@@ -1,4 +1,7 @@
 %h3= t('.title')
+
+= render :partial => '/shared/prefill_import', :locals => { :url => prefill_article_path(@article) }
+
 = simple_form_for @article do |f|
   = render :partial => 'form', :locals => { :f => f }
   #submit_buttons

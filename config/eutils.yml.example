@@ -1,0 +1,9 @@
+# Optional NCBI E-utilities politeness settings (PubMed / PMID imports only).
+# Crossref (DOI) needs none of this. Copy to config/eutils.yml and edit.
+default: &default
+  tool: "SALVA"
+  email: "library@your-institution.mx"   # identifies your app to NCBI
+  api_key: ""                             # optional: raises the rate limit 3 -> 10 req/s
+development: { <<: *default }
+test:        { <<: *default }
+production:  { <<: *default }
