@@ -15,9 +15,11 @@ module MetadataFetcher
 
   # -> Crossref "message" hash, or nil on any failure.
   def crossref(doi, opts = {})
-    body = get(CROSSREF + doi.to_s, opts)      # Crossref accepts the raw DOI in the path
+    url = CROSSREF + doi.to_s                  # Crossref accepts the raw DOI in the path
+    body = get(url, opts)
     body ? JSON.parse(body)['message'] : nil
-  rescue StandardError
+  rescue StandardError => e
+    log_failure('Crossref', url, e)
     nil
   end
 
@@ -27,14 +29,17 @@ module MetadataFetcher
           'tool' => opts[:tool], 'email' => opts[:email], 'api_key' => opts[:api_key] }
     query = q.reject { |_, v| v.nil? || v.to_s.empty? }
              .map { |k, v| k + '=' + URI.encode_www_form_component(v) }.join('&')
-    body = get(EUTILS + '?' + query, opts)
+    url = EUTILS + '?' + query
+    body = get(url, opts)
     return nil unless body
     res = (JSON.parse(body)['result'] || {})
     res[pmid.to_s]
-  rescue StandardError
+  rescue StandardError => e
+    log_failure('PubMed', url, e)
     nil
   end
 
+  # -> response body on HTTP success, or nil (logging why) on any other outcome.
   def get(url, opts = {})
     uri  = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
@@ -44,6 +49,27 @@ module MetadataFetcher
     req = Net::HTTP::Get.new(uri.request_uri)
     req['User-Agent'] = opts[:user_agent] || 'SALVA-importer (mailto:library@example.org)'
     resp = http.request(req)
-    resp.is_a?(Net::HTTPSuccess) ? resp.body : nil
+    if resp.is_a?(Net::HTTPSuccess)
+      resp.body
+    else
+      log("MetadataFetcher: #{url} -> HTTP #{resp.code} #{resp.message}")
+      nil
+    end
+  end
+
+  # Only the two public lookups rescue StandardError (network/DNS/TLS errors,
+  # JSON parse errors); a non-2xx HTTP response is logged inside #get above.
+  # Both paths land here so a failure is visible in the Rails log instead of
+  # silently collapsing into the generic "no metadata found" flash message.
+  def log_failure(source, url, error)
+    log("MetadataFetcher: #{source} lookup failed (#{url}): #{error.class}: #{error.message}")
+  end
+
+  def log(message)
+    if defined?(Rails) && Rails.respond_to?(:logger) && Rails.logger
+      Rails.logger.warn(message)
+    else
+      warn(message)
+    end
   end
 end
